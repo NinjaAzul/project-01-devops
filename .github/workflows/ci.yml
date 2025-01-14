@@ -9,17 +9,18 @@ jobs:
   build:
     name: "Build and Test"
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [18, 20]
+    # strategy:
+    #   matrix:
+    #     node: [18, 20]
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js | ${{ matrix.node }}
+      # - name: Setup Node.js | ${{ matrix.node }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 20
           cache: "npm"
 
       - run: npm install
@@ -41,7 +42,15 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker Image
-        run: docker build -t ericl123/rocketseat-ci-api:${{ steps.generate_tag.outputs.sha }} .
+        uses: docker/build-push-action@v6.11.0
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: ericl123/rocketseat-ci-api:${{ steps.generate_tag.outputs.sha }}, ericl123/rocketseat-ci-api:latest
 
-      - name: Push Docker Image
-        run: docker push ericl123/rocketseat-ci-api:${{ steps.generate_tag.outputs.sha }}
+      # - name: Build Docker Image
+      #   run: docker build -t ericl123/rocketseat-ci-api:${{ steps.generate_tag.outputs.sha }} .
+
+      # - name: Push Docker Image
+      #   run: docker push ericl123/rocketseat-ci-api:${{ steps.generate_tag.outputs.sha }}
