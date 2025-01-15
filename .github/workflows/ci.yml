@@ -68,7 +68,7 @@ jobs:
             "ServiceName": "devops-ci",
             "SourceConfiguration": {
               "AuthenticationConfiguration": {
-                "AccessRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/github-actions-role"
+                "AccessRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/app-runner-role"
               },
               "ImageRepository": {
                 "ImageIdentifier": "'${IMAGE_URL}'",
