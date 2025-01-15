@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build:
     name: "Build and Test"
@@ -35,19 +39,37 @@ jobs:
       - name: Create .env File
         run: echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
 
-      - name: Login Into The Container Registry
-        uses: docker/login-action@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-role
+          aws-region: us-east-2
 
-      - name: Build Docker Image
-        uses: docker/build-push-action@v6.11.0
-        with:
-          context: .
-          file: Dockerfile
-          push: true
-          tags: ericl123/rocketseat-ci-api:${{ steps.generate_tag.outputs.sha }}, ericl123/rocketseat-ci-api:latest
+      - name: Login to AWS ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: my-ecr-repo
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      # - name: Login Into The Container Registry
+      #   uses: docker/login-action@v3
+      #   with:
+      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # - name: Build Docker Image
+      #   uses: docker/build-push-action@v6.11.0
+      #   with:
+      #     context: .
+      #     file: Dockerfile
+      #     push: true
+      #     tags: ericl123/rocketseat-ci-api:${{ steps.generate_tag.outputs.sha }}, ericl123/rocketseat-ci-api:latest
 
       # - name: Build Docker Image
       #   run: docker build -t ericl123/rocketseat-ci-api:${{ steps.generate_tag.outputs.sha }} .

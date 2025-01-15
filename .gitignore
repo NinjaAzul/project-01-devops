@@ -54,3 +54,18 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Ignorar todos os arquivos Terraform state
+*.tfstate
+
+# Ignorar arquivos de backup do state do Terraform
+*.tfstate.backup
+
+# Ignorar lock files gerados pelo Terraform
+.terraform.lock.hcl
+
+# Ignorar diretórios de configuração locais do Terraform
+.terraform/
+
+# Ignorar arquivos de variáveis do Terraform
+*.tfvars
