@@ -59,16 +59,17 @@ jobs:
           IMAGE=$(echo $REGISTRY/devops-ci:$TAG)
           echo "image-url=$IMAGE" >> $GITHUB_OUTPUT
 
-      - name: Deploy to app runner
-        uses: awslabs/amazon-app-runner-deploy@2.5.2
+      - name: Deploy to App Runner
+        uses: GlueOps/github-actions-app-runner@v0.3.0
         with:
-          service: devops-ci
+          service-name: devops-ci
           image: ${{ steps.build-image.outputs.image-url }}
           access-role-arn: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/app-runner-role
           region: us-east-2
           cpu: 1
-          memory: 2
+          memory: 2048
           port: 3000
+          wait-for-service-stability: true
 
       # - name: Login Into The Container Registry
       #   uses: docker/login-action@v3
