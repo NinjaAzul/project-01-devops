@@ -69,11 +69,3 @@ jobs:
       #     file: Dockerfile
       #     push: true
       #     tags: ericl123/rocketseat-ci-api:${{ steps.generate_tag.outputs.sha }}, ericl123/rocketseat-ci-api:latest
-
-      - name: Build Docker
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ steps.generate_tag.outputs.sha }}
-        run: |
-          docker build -t $REGISTRY:$IMAGE_TAG .
-          docker push $REGISTRY:$IMAGE_TAG
