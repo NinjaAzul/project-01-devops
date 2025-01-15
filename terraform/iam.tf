@@ -61,14 +61,27 @@ resource "aws_iam_role" "github-actions-role" {
             "ecr:UploadLayerPart",
             "ecr:CompleteLayerUpload",
             "ecr:GetAuthorizationToken",
+            "ecr:DescribeImages",
+            "ecr:ListImages",
+            "ecr:DescribeRepositories",
+            "ecr:GetRepositoryPolicy",
+            "ecr:GetLifecyclePolicy",
+            "ecr:GetLifecyclePolicyPreview",
+            "ecr:ListTagsForResource",
+            "ecr:DescribeImageScanFindings"
           ]
           Effect   = "Allow"
           Resource = "*"
         },
         {
-          Sid      = "Statement3"
-          Effect   = "Allow"
-          Action   = ["iam:PassRole", "iam:CreateServiceLinkedRole"]
+          Sid    = "Statement3"
+          Effect = "Allow"
+          Action = [
+            "iam:PassRole",
+            "iam:CreateServiceLinkedRole",
+            "iam:GetRole",
+            "iam:ListRoles"
+          ]
           Resource = "*"
         }
       ]
