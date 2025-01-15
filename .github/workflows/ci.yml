@@ -67,7 +67,7 @@ jobs:
           access-role-arn: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/app-runner-role
           region: us-east-2
           cpu: 1
-          memory: 2048
+          memory: 2
           port: 3000
           wait-for-service-stability: true
 
