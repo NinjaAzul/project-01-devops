@@ -59,31 +59,21 @@ jobs:
           IMAGE=$(echo $REGISTRY/devops-ci:$TAG)
           echo "image-url=$IMAGE" >> $GITHUB_OUTPUT
 
-      - name: Deploy to App Runner
-        env:
-          IMAGE_URL: ${{ steps.build-image.outputs.image-url }}
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-        run: |
-          aws apprunner create-service --cli-input-json '{
-            "ServiceName": "devops-ci",
-            "SourceConfiguration": {
-              "AuthenticationConfiguration": {
-                "AccessRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/app-runner-role"
-              },
-              "ImageRepository": {
-                "ImageIdentifier": "'${IMAGE_URL}'",
-                "ImageRepositoryType": "ECR",
-                "ImageConfiguration": {
-                  "Port": "3000"
-                }
-              }
-            },
-            "InstanceConfiguration": {
-              "Cpu": "1 vCPU",
-              "Memory": "2 GB"
-            }
-          }'
+      - name: Deploy to app runner
+        id: deploy-app-runner
+        uses: awslabs/amazon-app-runner-deploy@main
+        with:
+          service: devops-ci
+          image: ${{ steps.build-image.outputs.image-url }}
+          access-role-arn: ${{ secrets.AWS_APP_RUNNER_ROLE }}
+          region: ${{ secrets.AWS_REGION }}
+          cpu: 1
+          memory: 2
+          port: 3000
+          wait-for-service-stability-seconds: 180
 
+      - name: App Runner check
+        run: echo "App Runner running... ${{ steps.deploy-app-runner.outputs.service-url }}"
       # - name: Login Into The Container Registry
       #   uses: docker/login-action@v3
       #   with:
