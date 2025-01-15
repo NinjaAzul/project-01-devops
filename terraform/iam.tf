@@ -22,7 +22,7 @@ resource "aws_iam_role" "github-actions-role" {
         Condition = {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-            "token.actions.githubusercontent.com:sub" = "repo:eusouodaniel/rocketseat.ci.iac:ref:refs/heads/main"
+            "token.actions.githubusercontent.com:sub" = "repo:NinjaAzul/project-01-devops:ref:refs/heads/main"
           }
         }
         Effect = "Allow"
@@ -97,7 +97,7 @@ resource "aws_iam_role" "ecr-role" {
         Condition = {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-            "token.actions.githubusercontent.com:sub" = "repo:eusouodaniel/rocketseat.ci.api:ref:refs/heads/main"
+            "token.actions.githubusercontent.com:sub" = "repo:NinjaAzul/project-01-devops:ref:refs/heads/main"
           }
         }
         Effect = "Allow"
