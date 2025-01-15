@@ -60,7 +60,7 @@ jobs:
           echo "image-url=$IMAGE" >> $GITHUB_OUTPUT
 
       - name: Deploy to app runner
-        uses: awslabs/aws-app-runner-deploy@main
+        uses: awslabs/amazon-app-runner-deploy@main
         with:
           service-name: devops-ci
           image-url: ${{ steps.build-docker-image.outputs.image-url }}
