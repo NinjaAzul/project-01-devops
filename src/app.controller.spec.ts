@@ -14,6 +14,6 @@ describe('AppController', () => {
 
   it('deve retornar Hello World!', () => {
     const result = appController.getHello();
-    expect(result).toBe('Hello World!');
+    expect(result).toBe('Hello World from DevOps!');
   });
 });
