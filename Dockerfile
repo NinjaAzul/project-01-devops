@@ -26,8 +26,8 @@ WORKDIR /usr/src/app
 # Copia a pasta `dist` gerada no build
 COPY --from=build /usr/src/app/dist ./dist
 
-# Copia o arquivo do Prisma (schema.prisma) para o container de produção
-COPY --from=build /usr/src/app/prisma ./prisma
+# Copia o arquivo do Prisma (schema.prisma) para o container de produção (comentado - banco de dados)
+# COPY --from=build /usr/src/app/prisma ./prisma
 
 # Copia apenas as dependências de produção
 COPY --from=build /usr/src/app/node_modules ./node_modules
@@ -35,8 +35,8 @@ COPY --from=build /usr/src/app/node_modules ./node_modules
 # Copia apenas as dependências de produção
 COPY --from=build /usr/src/app/package.json ./package.json
 
-# Copia o arquivo .env para o container de produção
-COPY .env ./.env
+# Copia o arquivo .env para o container de produção (comentado - pode conter configs de banco)
+# COPY .env ./.env
 
 # Expõe a porta usada pelo aplicativo
 EXPOSE 3000

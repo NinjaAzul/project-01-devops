@@ -1,20 +1,20 @@
 version: '3.7'
 
 services:
-  mysql:
-    image: mysql:8
-    container_name: mysql
-    volumes:
-      - db:/var/lib/mysql
-    ports:
-      - '3306:3306'
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=devops
-      - MYSQL_USER=admin
-      - MYSQL_PASSWORD=root
-    networks:
-      - devops-networks
+  # mysql:
+  #   image: mysql:8
+  #   container_name: mysql
+  #   volumes:
+  #     - db:/var/lib/mysql
+  #   ports:
+  #     - '3306:3306'
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=root
+  #     - MYSQL_DATABASE=devops
+  #     - MYSQL_USER=admin
+  #     - MYSQL_PASSWORD=root
+  #   networks:
+  #     - devops-networks
 
   api-devops:
     build:
@@ -22,16 +22,15 @@ services:
     container_name: api-devops
     ports:
       - '3001:3000'
-    depends_on:
-      - mysql
+    # depends_on:
+    #   - mysql
     networks:
       - devops-networks
-    environment:
-      - DATABASE_URL=mysql://root:root@mysql:3306/devops
+    # environment:
+    #   - DATABASE_URL=mysql://root:root@mysql:3306/devops
 
 networks:
   devops-networks:
     driver: bridge
-
-volumes:
-  db:
+# volumes:
+#   db:
