@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-ts
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 10%
+  selector:
+    matchLabels:
+      api: app-ts
+  template:
+    metadata:
+      labels:
+        api: app-ts
+    spec:
+      containers:
+        - name: app-ts
+          image: ericl123/ap-ts-erick:v8
+          envFrom:
+            - secretRef:
+                name: app-ts
+            - configMapRef:
+                name: app-ts
+          # env:
+          #   - name: DATABASE_URL
+          #     valueFrom:
+          #       configMapKeyRef:
+          #         name: app-ts
+          #         key: database_url
+          #   - name: API_KEY
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: app-ts
+          #         key: api_key
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          startupProbe:
+            # exec:
+            #   command: ["/bin/sh", "-c", "sleep 30"]
+            httpGet:
+              path: /healthz
+              port: 3000
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 1
+            periodSeconds: 10
+            initialDelaySeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 3000
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 1
+            periodSeconds: 10
+            initialDelaySeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            periodSeconds: 20
+            successThreshold: 1
+            failureThreshold: 3
+            initialDelaySeconds: 10
+          resources:
+            requests:
+              cpu: 150m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi

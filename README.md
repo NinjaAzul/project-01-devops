@@ -65,3 +65,87 @@ docker volume
 ```
 
 # CI/CD
+
+```
+1° Criar uma imagem docker do seu projeto funcionando em modo de produção
+2° Criar um arquivo de configuração do seu ci/cd (Jenkins, Gitlab, Github Actions) e logando no mesmo com o seu repositorio
+3° No pipeline pode fazer pre-deploy, deploy, post-deploy por exemplo (testes, build, deploy, etc)
+4° No pipeline criar login com seu armazenador de imagens (dockerhub, github, etc)
+5° Fazer o build da imagem e enviar para o repositorio(dockerhub, github, etc)
+6° Fazer o deploy do seu projeto no kubernetes ou outro container manager (k8s, docker swarm)
+```
+
+# Teste de carga
+
+```bash
+kubectl get svc -n primeira-app
+
+kubectl run fortio -n primeira-app -it --rm --image=fortio/fortio -- load -c 50 -qps 6000 -t 120s http://10.96.216.121:80/k8s
+
+```
+
+# Subir imagem para o dockerhub
+
+```bash
+
+# login no dockerhub
+
+docker login
+
+# Build da imagem
+
+docker build -t ericl123/ap-ts-erick:v6 .
+
+# subir imagem para o dockerhub
+
+docker push ericl123/ap-ts-erick:v6
+
+# rodar k8s
+
+kubectl apply -f k8s/deployment.yaml
+
+```
+
+# Self-healing example
+
+```yaml
+# startupProbe - verifica se o container está pronto para receber requisições
+ startupProbe:
+           # exec:
+           #   command: ["/bin/sh", "-c", "sleep 30"]
+           httpGet:
+             path: /healthz
+             port: 3000
+           # se o container não responder em 10 segundos, ele será considerado como falho
+           failureThreshold: 3
+           # se o container responder em 10 segundos, ele será considerado como funcionando
+           successThreshold: 1
+           # timeout de 1 segundo para cada requisição
+           timeoutSeconds: 1
+           # verifica a cada 10 segundos
+           periodSeconds: 10
+           # delay de 10 segundos para iniciar a verificação
+           initialDelaySeconds: 10
+
+# readinessProbe - verifica se o container está pronto para receber requisições
+         readinessProbe:
+           httpGet:
+             path: /readyz
+             port: 3000
+           failureThreshold: 3
+           successThreshold: 1
+           timeoutSeconds: 1
+           periodSeconds: 10
+           initialDelaySeconds: 10
+
+# livenessProbe - verifica se o container está funcionando
+         livenessProbe:
+           httpGet:
+             path: /health
+             port: 3000
+           periodSeconds: 20
+           successThreshold: 1
+           failureThreshold: 3
+           initialDelaySeconds: 10
+
+```
